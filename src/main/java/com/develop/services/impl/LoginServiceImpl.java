@@ -19,10 +19,10 @@ public class LoginServiceImpl implements LoginService {
     @Transactional
     public LoginResponse login(String username, String password) {
         LoginResponse loginResponse = new LoginResponse();
-        if (checkUserExist(username)) {
-            User user = getUser(username);
-            if (checkPassword(user.getPassword(), password)) {
-                loginResponse.setUser(user);
+
+        User userFromDB = getUser(username);
+        if (userFromDB != null) {
+            if (checkPassword(userFromDB, password)) {
                 loginResponse.setMessage("User has been logged successful");
             } else {
                 loginResponse.setMessage("Wrong password");
@@ -30,25 +30,17 @@ public class LoginServiceImpl implements LoginService {
         } else {
             loginResponse.setMessage("User is not exist");
         }
-        User user = new User();
-        user.setPassword(password);
-        user.setUsername(username);
-
-        userDAO.save(user);
 
         return loginResponse;
     }
 
-    private boolean checkUserExist(String username) {
-        return getUser(username) != null;
-    }
-
-    private boolean checkPassword(String passwordFromDB, String passwordFromClient) {
-        return passwordFromDB.equals(passwordFromClient);
-    }
-
-    @Override
-    public User getUser(String username) {
+    private User getUser(String username) {
         return userDAO.getUser(username);
     }
+
+    private boolean checkPassword(User userFromDB, String password) {
+        String passwordUserFromDB = userFromDB.getPassword();
+        return passwordUserFromDB.equals(password);
+    }
+
 }

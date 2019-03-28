@@ -1,11 +1,6 @@
 package com.develop.models;
 
-import org.hibernate.annotations.NaturalId;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name = "user")
 public class User {
@@ -13,7 +8,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NaturalId
+    @Column(unique = true)
     private String username;
     private String password;
 

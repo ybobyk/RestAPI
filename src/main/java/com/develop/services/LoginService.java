@@ -5,5 +5,5 @@ import com.develop.models.response.LoginResponse;
 
 public interface LoginService {
     LoginResponse login(String username, String password);
-    User getUser(String id);
+//    User getUser(String id);
 }

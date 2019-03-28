@@ -25,9 +25,12 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User getUser(String username) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
-                .add(Restrictions.eq("id", Long.valueOf(username)));
-        Object result = criteria.uniqueResult();
-        return (User) result;
+        Criteria criteria = sessionFactory.getCurrentSession()
+                .createCriteria(User.class)
+                .add(Restrictions.eq("username", username));
+        User result = (User) criteria.uniqueResult();
+        return result;
     }
+
+
 }
