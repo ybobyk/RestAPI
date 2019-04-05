@@ -7,7 +7,6 @@ public class LoginResponse {
     private String message;
     private User user;
 
-
     public void setMessage(String message) {
         this.message = message;
     }
