@@ -32,5 +32,14 @@ public class UserDAOImpl implements UserDAO {
         return result;
     }
 
+    @Override
+    public User getUserByToken(String token) {
+        Criteria criteria = sessionFactory.getCurrentSession()
+                .createCriteria(User.class)
+                .add(Restrictions.eq("token", token));
+        User result = (User) criteria.uniqueResult();
+        return result;
+    }
+
 
 }
