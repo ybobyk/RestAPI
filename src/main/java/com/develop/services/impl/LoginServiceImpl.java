@@ -6,9 +6,13 @@ import com.develop.models.User;
 import com.develop.models.ValidToken;
 import com.develop.models.response.LoginResponse;
 import com.develop.services.LoginService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 @Transactional
@@ -28,9 +32,11 @@ public class LoginServiceImpl implements LoginService {
         User userFromDB = getUser(username);
         if (userFromDB != null) {
             if (checkPassword(userFromDB, password)) {
-                ValidToken token = generateToken(userFromDB);
-                validTokenDAO.saveValidToken(token);
+                String token = generateToken(userFromDB);
+                userFromDB.setToken(token);
+                userDAO.update(userFromDB);
                 loginResponse.setMessage("User has been logged successful");
+                loginResponse.setUser(userFromDB);
             } else {
                 loginResponse.setMessage("Wrong password");
             }
@@ -50,10 +56,24 @@ public class LoginServiceImpl implements LoginService {
         return passwordUserFromDB.equals(password);
     }
 
-    private ValidToken generateToken(User user) {
-        ValidToken validToken = new ValidToken();
-        validToken.setToken("123456");
-        return validToken;
+    private String generateToken(User user) {
+        String jwt = "null";
+        try {
+            jwt = Jwts.builder()
+                    .claim("name", user.getFirstName())
+                    .claim("username", user.getUsername())
+                    .claim("time", new Date().getTime())
+                    .claim("admin", false)
+                    .signWith(
+                            SignatureAlgorithm.HS256,
+                            "secret".getBytes("UTF-8")
+                    )
+                    .compact();
+        } catch (Exception e) {
+
+        }
+
+        return jwt;
     }
 
 }
